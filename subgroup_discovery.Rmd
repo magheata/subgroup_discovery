@@ -14,11 +14,7 @@ output:
 # install.packages("fst")
 library(fst)
 data.filename = "USCensus1990.fst"
-#data <- read.csv("USCensus1990.data.txt")
-# Store the data frame to disk
-#write.fst(data, data.filename)
-# Retrieve the data frame again
-data <- read.fst(data.filename)
+data <- read.fst("USCensus1990.fst")
 ```
 ```{r}
 str(data)
