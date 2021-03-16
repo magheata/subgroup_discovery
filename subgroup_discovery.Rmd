@@ -1,0 +1,94 @@
+---
+title: "Descubrimiento de subgrupos en el dataset *US Census Data*"
+author: "Miruna Andreea Gheata, Miguel Rodríguez Gómez"
+date: "3/16/2021"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    df_print: paged
+    number_sections: true
+---
+
+```{r}
+# install.packages("fst")
+library(fst)
+data.filename = "USCensus1990.fst"
+#data <- read.csv("USCensus1990.data.txt")
+# Store the data frame to disk
+#write.fst(data, data.filename)
+# Retrieve the data frame again
+data <- read.fst(data.filename)
+```
+```{r}
+str(data)
+```
+
+- **Age**: Age Allocation Flag
+- **Ancstry1**: First Ancestry Allocation Flag
+- **Ancstry2**: Second Ancestry Allocation Flag
+- **Avail**: Available for Work
+- **Citizen**: Citizenship
+- **Class**: Class of Worker
+- **Depart**: Time of Departure for Work Hour and Minutes
+- **Disabl1**:  Work Limitation Stat.
+- **Disabl2**: Work Prevention Stat.
+- **English**: Ability to Speak English
+- **Feb55**: Served February 1955 July 1964
+- **Fertil**: No. of Chld. Ever Born
+- **Hispanic**: Detailed Hispanic Origin
+- **Hour89**: Usual Hrs. Worked Per Week in 1989 Alloc
+- **Hours**: Hrs. Worked Last Week Allocation Flag
+- **Immigr**: Yr. of Entry
+- **Income1**: Wages or Salary Inc. in 1989
+- **Income2**: Nonfarm Self Employment Inc.
+- **Income3**: Farm Self Employment Inc.
+- **Income4**: Int., Dividends, and Net Rental Inc
+- **Income5**: Soc. Sec Inc.
+- **Income6**: Pub. Asst.
+- **Income7**: Ret. Inc.
+- **Income8**: All Other Inc.
+- **Industry**: Ind.
+- **Korean**: Served Korean Conflict June 1950 January
+- **Lang1**:  Language Other Than English At Home
+- **Looking**: Looking for Work
+- **Marital**: Marital Stat.
+- **May75880**: Served May 1975 to August 1980
+- **Means**: Means of Transportation to Work 
+- **Military**: Served May 1975 to August 1980
+- **Mobility**: Mobility Stat. Lived Here on April 1, 19
+- **Mobillim**: Mobility Limitation
+- **Occup**: Occupation
+- **Othrserv**: Served Any Other Time
+- **Perscare**: Personal Care Limitation
+- **POB**: Place of Birth
+- **Poverty**: Pers. Poverty Stat.
+- **Pwgt1**: Pers. Wgt
+- **Ragechld**: Presence and Age of Own Chld.
+- **Rearning**: Total Pers. Earnings
+- **Relat1**: Rel. or Not Related or Grp. Qtrs.
+- **Relat2**: Detailed Rel. Other Rel.
+- **Remplpar**: Employment Stat. of Parents
+- **Riders**: Vehicle Occupancy
+- **Rlabor**: Employment Stat. Recode
+- **Rownchld**: Own Child
+- **Rpincome**: Total Pers. Inc. Signed
+- **RPOB**: Place of Birth Recode
+- **Rrelchld**: Related Child
+- **Rspouse**: Married, Spouse Present/spouse Absent
+- **Rvetserv**: Veteran Per. of Srvc.
+- **School**: School Enrollment
+- **Sept80**: Served September 1980 or Later
+- **Sex**
+- **Subfam1**: Subfam. Rel.
+- **Subfam2**: Subfam. Number
+- **Tmpabsnt**: Temp. Absence From Work
+- **Travtime**: Travel Time to Work
+- **Vietnam**: Served Vietnam Era August 1964 April 197
+- **Week89**: Wks. Worked Last Yr. 1989
+- **Work89**: Worked Last Yr. 1989
+- **Worklwk**: Worked Last Week
+- **WWII**: Served World War II September 1940 July
+- **Yearsch**: Ed. Attainment
+- **Yearwrk**: Yr. Last Worked
+- **Yrsserv**: Yrs. of Active Duty Military Srvc.
