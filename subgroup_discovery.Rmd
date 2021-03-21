@@ -11,11 +11,19 @@ output:
 ---
 
 ```{r}
+#install.packages("dplyr")
+library(dplyr) 
+library(rsubgroup)
 # install.packages("fst")
 library(fst)
+```
+
+```{r}
 data.filename = "USCensus1990.fst"
 data <- read.fst("USCensus1990.fst")
 ```
+
+
 ```{r}
 str(data)
 ```
@@ -88,14 +96,12 @@ str(data)
 - **Yearsch**: Ed. Attainment
 - **Yearwrk**: Yr. Last Worked
 - **Yrsserv**: Yrs. of Active Duty Military Srvc.
+
+https://rdrr.io/cran/rsubgroup/man/SDTaskConfig-class.html
+
 ```{r}
-#install.packages("dplyr")
-library(dplyr) 
-```
-```{r}
-library(dplyr) 
 set.seed(2021)
-data_sample <- sample_n(data, round(nrow(data)*0.25))
+data_sample <- sample_n(data, round(nrow(data)*0.1))
 data_sample[] <- lapply(data_sample, factor) # the "[]" keeps the dataframe structure
 col_names <- names(data_sample)
 # to do it for some names in a vector named 'col_names'
@@ -103,17 +109,13 @@ data_sample[col_names] <- lapply(data_sample[col_names] , factor)
 str(data_sample)
 head(data_sample)
 ```
-```{r}
-str(data_sample)
-```
 
 ```{r}
-library(rsubgroup)
 old <- Sys.time()
 
 print(old)
 
-resultado = DiscoverSubgroups(data_sample, as.target("iEnglish", "4"),
+english = DiscoverSubgroups(data_sample, as.target("iEnglish", "4"),
                               new("SDTaskConfig",
                                   attributes=c("dAge",
                                                "dAncstry1",
@@ -128,8 +130,190 @@ resultado = DiscoverSubgroups(data_sample, as.target("iEnglish", "4"),
                                                "iYearsch",
                                                "iYearwrk")))
 new <- Sys.time() - old
-ToDataFrame(resultado)
+ToDataFrame(english)
 print(new)
 ```
 
 
+```{r}
+old <- Sys.time()
+
+print(old)
+
+disabled = DiscoverSubgroups(data_sample, as.target("iDisabl1", "1"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAge",
+                                               "iCitizen",
+                                               "iMilitary",
+                                               "iWork89",
+                                               "iWWII", 
+                                               "dYrsserv",
+                                               "iFeb55", 
+                                               "iKorean",
+                                               "dIndustry",
+                                               "iMay75880",
+                                               "iYearsch",
+                                               "iYearwrk")))
+new <- Sys.time() - old
+ToDataFrame(disabled)
+print(new)
+```
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+class = DiscoverSubgroups(data_sample, as.target("iClass", "5"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "iKorean",
+                                               "iMilitary",
+                                               "iMobility",
+                                               "dOccup",
+                                               "iVietnam",
+                                               "iWWII",
+                                               "iYearsch",
+                                               "iRemplpar",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iRvetserv")))
+new <- Sys.time() - old
+ToDataFrame(class)
+print(new)
+```
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+doctorate_ps = DiscoverSubgroups(data_sample, as.target("iYearsch", "17"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iClass",
+                                               "dDepart",
+                                               "iLang1",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "iRemplpar",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iRvetserv",
+                                               "iSex", 
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "iMilitary",
+                                               "iRelat1",
+                                               "iRelat2")))
+new <- Sys.time() - old
+ToDataFrame(doctorate_ps)
+print(new)
+```
+
+
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+doctorate_ares = DiscoverSubgroups(data_sample, as.target("iYearsch", "17"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iClass",
+                                               "dDepart",
+                                               "iLang1",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "iRemplpar",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iRvetserv",
+                                               "iSex", 
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "iMilitary",
+                                               "iRelat1",
+                                               "iRelat2"), qf='ares'))
+new <- Sys.time() - old
+ToDataFrame(doctorate_ares)
+print(new)
+```
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+doctorate_bsd = DiscoverSubgroups(data_sample, as.target("iYearsch", "17"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iClass",
+                                               "dDepart",
+                                               "iLang1",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "iRemplpar",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iRvetserv",
+                                               "iSex", 
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "iMilitary",
+                                               "iRelat1",
+                                               "iRelat2"), method='bsd'))
+new <- Sys.time() - old
+ToDataFrame(doctorate_bsd)
+print(new)
+```
