@@ -1,0 +1,437 @@
+---
+title: "Descubrimiento de subgrupos en el dataset *US Census Data*"
+author: "Miruna Andreea Gheata, Miguel Rodríguez Gómez"
+date: "3/16/2021"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    df_print: paged
+    number_sections: true
+---
+
+```{r}
+library(rJava)
+library(foreign)
+#install.packages("dplyr")
+library(dplyr) 
+library(rsubgroup)
+#install.packages("fst")
+library(fst)
+```
+
+```{r}
+data.filename = "USCensus1990.fst"
+data <- read.fst("USCensus1990.fst")
+```
+
+
+```{r}
+str(data)
+```
+
+- **Age**: Age Allocation Flag
+- **Ancstry1**: First Ancestry Allocation Flag
+- **Ancstry2**: Second Ancestry Allocation Flag
+- **Avail**: Available for Work
+- **Citizen**: Citizenship
+- **Class**: Class of Worker
+- **Depart**: Time of Departure for Work Hour and Minutes
+- **Disabl1**:  Work Limitation Stat.
+- **Disabl2**: Work Prevention Stat.
+- **English**: Ability to Speak English
+- **Feb55**: Served February 1955 July 1964
+- **Fertil**: No. of Chld. Ever Born
+- **Hispanic**: Detailed Hispanic Origin
+- **Hour89**: Usual Hrs. Worked Per Week in 1989 Alloc
+- **Hours**: Hrs. Worked Last Week Allocation Flag
+- **Immigr**: Yr. of Entry
+- **Income1**: Wages or Salary Inc. in 1989
+- **Income2**: Nonfarm Self Employment Inc.
+- **Income3**: Farm Self Employment Inc.
+- **Income4**: Int., Dividends, and Net Rental Inc
+- **Income5**: Soc. Sec Inc.
+- **Income6**: Pub. Asst.
+- **Income7**: Ret. Inc.
+- **Income8**: All Other Inc.
+- **Industry**: Ind.
+- **Korean**: Served Korean Conflict June 1950 January
+- **Lang1**:  Language Other Than English At Home
+- **Looking**: Looking for Work
+- **Marital**: Marital Stat.
+- **May75880**: Served May 1975 to August 1980
+- **Means**: Means of Transportation to Work 
+- **Military**: Served May 1975 to August 1980
+- **Mobility**: Mobility Stat. Lived Here on April 1, 19
+- **Mobillim**: Mobility Limitation
+- **Occup**: Occupation
+- **Othrserv**: Served Any Other Time
+- **Perscare**: Personal Care Limitation
+- **POB**: Place of Birth
+- **Poverty**: Pers. Poverty Stat.
+- **Pwgt1**: Pers. Wgt
+- **Ragechld**: Presence and Age of Own Chld.
+- **Rearning**: Total Pers. Earnings
+- **Relat1**: Rel. or Not Related or Grp. Qtrs.
+- **Relat2**: Detailed Rel. Other Rel.
+- **Remplpar**: Employment Stat. of Parents
+- **Riders**: Vehicle Occupancy
+- **Rlabor**: Employment Stat. Recode
+- **Rownchld**: Own Child
+- **Rpincome**: Total Pers. Inc. Signed
+- **RPOB**: Place of Birth Recode
+- **Rrelchld**: Related Child
+- **Rspouse**: Married, Spouse Present/spouse Absent
+- **Rvetserv**: Veteran Per. of Srvc.
+- **School**: School Enrollment
+- **Sept80**: Served September 1980 or Later
+- **Sex**
+- **Subfam1**: Subfam. Rel.
+- **Subfam2**: Subfam. Number
+- **Tmpabsnt**: Temp. Absence From Work
+- **Travtime**: Travel Time to Work
+- **Vietnam**: Served Vietnam Era August 1964 April 197
+- **Week89**: Wks. Worked Last Yr. 1989
+- **Work89**: Worked Last Yr. 1989
+- **Worklwk**: Worked Last Week
+- **WWII**: Served World War II September 1940 July
+- **Yearsch**: Ed. Attainment
+- **Yearwrk**: Yr. Last Worked
+- **Yrsserv**: Yrs. of Active Duty Military Srvc.
+
+https://rdrr.io/cran/rsubgroup/man/SDTaskConfig-class.html
+
+```{r}
+set.seed(2021)
+data_sample <- sample_n(data, round(nrow(data)*0.1))
+data_sample[] <- lapply(data_sample, factor) # the "[]" keeps the dataframe structure
+col_names <- names(data_sample)
+# to do it for some names in a vector named 'col_names'
+data_sample[col_names] <- lapply(data_sample[col_names] , factor)
+str(data_sample)
+head(data_sample)
+```
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+lookjob = DiscoverSubgroups(data_sample, as.target("iLooking", "1"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAge",
+                                               "dAncstry1",
+                                               "dAncstry2",
+                                               "iCitizen",
+                                               "iClass", 
+                                               "iImmigr",
+                                               "dPOB", 
+                                               "dPoverty",
+                                               "iWork89",
+                                               "iSex",
+                                               "iYearsch",
+                                               "iYearwrk",
+                                               "iEnglish",
+                                               "dHispanic")))
+new <- Sys.time() - old
+ToDataFrame(lookjob)
+print(new)
+```
+
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+oldpeople = DiscoverSubgroups(data_sample, as.target("dAge", "7"),
+                              new("SDTaskConfig",
+                                  attributes=c("iSex",
+                                               "iCitizen",
+                                               "dYrsserv",
+                                               "dIndustry",
+                                               "iYearsch",
+                                               "iYearwrk",
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "dPOB",
+                                               "iEnglish",
+                                               "iMarital",
+                                               "dHispanic",
+                                               "iImmigr",
+                                               "iCitizen",
+                                               "iClass")))
+new <- Sys.time() - old
+ToDataFrame(oldpeople)
+print(new)
+```
+```{r}
+old <- Sys.time()
+
+print(old)
+
+oldpeople2 = DiscoverSubgroups(data_sample, as.target("dAge", "7"),
+                              new("SDTaskConfig",
+                                  attributes=c("iSex",
+                                               "dAncstry1",
+                                               "dAncstry2",
+                                               "iCitizen",
+                                               "dYrsserv",
+                                               "dIndustry",
+                                               "iYearsch",
+                                               "iYearwrk",
+                                               "iFertil",
+                                               "dPOB",
+                                               "iEnglish",
+                                               "iMarital",
+                                               "dHispanic",
+                                               "iImmigr",
+                                               "iCitizen",
+                                               "iClass")))
+new <- Sys.time() - old
+ToDataFrame(oldpeople2)
+print(new)
+```
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+hoursworked = DiscoverSubgroups(data_sample, as.target("dHours", "5"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iCitizen",
+                                               "iClass",
+                                               "dYrsserv",
+                                               "dIndustry",
+                                               "iYearsch",
+                                               "iYearwrk",
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "dPoverty",
+                                               "dPOB")))
+new <- Sys.time() - old
+ToDataFrame(hoursworked)
+print(new)
+```
+```{r}
+old <- Sys.time()
+
+print(old)
+
+oldpeople3 = DiscoverSubgroups(data_sample, as.target("dAge", "7"),
+                              new("SDTaskConfig",
+                                  attributes=c("iSex",
+                                               "dAncstry1",
+                                               "dAncstry2",
+                                               "iCitizen",
+                                               "dYrsserv",
+                                               "dIndustry",
+                                               "iYearsch",
+                                               "iFertil",
+                                               "dPOB",
+                                               "iEnglish",
+                                               "iMarital",
+                                               "dHispanic",
+                                               "iImmigr",
+                                               "iCitizen",
+                                               "iClass",
+                                               "iFertil")))
+new <- Sys.time() - old
+ToDataFrame(oldpeople3)
+print(new)
+```
+```{r}
+hoursworked2 = DiscoverSubgroups(data_sample, as.target("dHours", "5"),
+                              new("SDTaskConfig",
+                                  attributes=c("iCitizen",
+                                               "iClass",
+                                               "dIndustry",
+                                               "dHispanic",
+                                               "dOccup",
+                                               "iImmigr",
+                                               "iFertil",
+                                               "dPOB",
+                                               "iYearsch")))
+new <- Sys.time() - old
+ToDataFrame(hoursworked2)
+print(new)
+```
+
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+notschool = DiscoverSubgroups(data_sample, as.target("iSchool", "1"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iClass",
+                                               "iLang1",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iSex", 
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "dAge")))
+new <- Sys.time() - old
+ToDataFrame(notschool)
+print(new)
+```
+
+
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+traveltime = DiscoverSubgroups(data_sample, as.target("dTravtime", "6"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iClass",
+                                               "iLang1",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iSex", 
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "iMilitary")))
+new <- Sys.time() - old
+ToDataFrame(traveltime)
+print(new)
+```
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+notschool_ares = DiscoverSubgroups(data_sample, as.target("iSchool", "1"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "dHispanic",
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "dAge"), qf="ares"))
+new <- Sys.time() - old
+ToDataFrame(notschool_ares)
+print(new)
+```
+```{r}
+hour50_1=ToDataFrame(hoursworked)
+hour50_2=ToDataFrame(hoursworked)
+notschool_ps=ToDataFrame(notschool)
+notschool_ares2=ToDataFrame(notschool_ares)
+traveltime_ps=ToDataFrame(traveltime)
+traveltime_ares=ToDataFrame(traveltime_ares)
+oldpeople_1=ToDataFrame(oldpeople)
+oldpeople_2=ToDataFrame(oldpeople2)
+oldpeople_3=ToDataFrame(oldpeople3)
+lookjob_=ToDataFrame(lookjob)
+```
+
+
+```{r}
+old <- Sys.time()
+
+print(old)
+
+traveltime_ares = DiscoverSubgroups(data_sample, as.target("dTravtime", "6"),
+                              new("SDTaskConfig",
+                                  attributes=c("dAncstry1",
+                                               "dAncstry2",
+                                               "iClass",
+                                               "iLang1",
+                                               "dPoverty",
+                                               "iCitizen",
+                                               "iDisabl1", 
+                                               "iDisabl2",
+                                               "iEnglish", 
+                                               "iImmigr",
+                                               "dIndustry",
+                                               "dOccup",
+                                               "dPoverty",
+                                               "dPOB",
+                                               "iSex", 
+                                               "dIncome1",
+                                               "dIncome2",
+                                               "dIncome3",
+                                               "dIncome4",
+                                               "dIncome5",
+                                               "dIncome6",
+                                               "dIncome7",
+                                               "dIncome8", 
+                                               "iFertil",
+                                               "iMilitary"),qf="ares"))
+new <- Sys.time() - old
+ToDataFrame(traveltime_ares)
+print(new)
+```
